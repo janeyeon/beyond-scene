@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Generating higher-resolution human-centric scenes with details and controls for exsiting text-to-image diffusion model">
+  <meta name="keywords" content="Largescenegeneration, ScaleCrafter">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BeyondScene: Higher-Resolution Human-Centric Scene Generation With Pretrained Diffusion</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro|Kalam"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://github.com/janeyeon">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">BeyondScene: Higher-Resolution Human-Centric Scene Generation With Pretrained Diffusion</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://gwang-kim.github.io/">Gwanghyun Kim</a><sup>1, *</sup>,</span>
+            <span class="author-block">
+              <a href="https://github.com/janeyeon">Hayeon Kim</a><sup>1, *</sup>,</span>
+            <span class="author-block">
+              <a href="https://github.com/seohoiki3215">Hoigi Seo</a><sup>1, *</sup>,</span>
+            <span class="author-block">
+              <a href="https://github.com/qkrtnskfk23">Dongun Kang</a><sup>1, *</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://icl.snu.ac.kr/pi">Se Young Chun</a><sup>1, 2</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Dept. of Electrical and Computer Engineering,</span>
+            <span class="author-block"><sup>2</sup>Interdisciplinary Program in Artificial Intelligence</span>
+            <span class="author-block"><sup>*</sup>These authors contributed equally to this work</span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Seoul National University, Korea</span>
+          </div>
+
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <!-- <span class="link-block">
+                <a href="https://arxiv.org/pdf/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span> -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span> -->
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <!-- Paper image. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+
+          <h2 class="title is-4"><strong>Generating 8K image using  <span class="dnerf">BeyondScene</span></h2>
+          <p style="text-align: center">
+            This <span style="color: #974EC3;">8192×8192</span> image, generated by <span class="dnerf">BeyondScene</span>, surpasses the training resolution of SDXL by <i style="color:#ac354b">64×</i>, while exceeding the technical classification of 8K (<span style="color: #974EC3;">7680×4320</span>)
+          </p>
+
+          <div class="img-txt">
+            <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/8k/mountain/beyondscene.png" style="width: 150%;">
+            <p>Resolution: 8192x8192; Prompt: <span style="font-family: 'Kalam';">“A background of the top of the mountain, A hiker with a broad smile, proudly wearing red hiking jacket. A content hiker, taking in the fresh air decked out in orange hiking jacket. An excited hiker, eyes sparkling with joy donned in yellow hiking jacket. A hiker, laughing at a joke, comfortably wearing green hiking jacket. A thoughtful hiker, with a serene expression, clad in blue hiking jacket. A jubilant hiker, radiating happiness dressed in purple hiking jacket.”</span></p>
+          </div>
+        </div>
+      </div>
+      <!--/ Paper image. -->
+    </div>
+
+      
+    </div>
+  </div>
+</section>
+
+<!-- 
+<section class="section">
+  <div class="container is-max-desktop">
+    Abstract.
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths"> --> 
+<!-- 
+<section class="hero is-small">
+  <div class="page">
+
+  <br>
+  <div  style="background-color: #ececec;">
+  <br>
+  <div class="container-small">
+    <h2 class="title is-3"><strong>Abstract</h2>
+    <p style="font-size: 14px;">
+      Generating higher-resolution human-centric scenes with details and controls remains a challenge for existing text-to-image diffusion models. This challenge stems from limited training image size, text encoder capacity (limited tokens), and the inherent difficulty of generating complex scenes involving multiple humans. While current methods attempted to address training size limit only, they often yielded human-centric scenes with severe artifacts. We propose <span class="dnerf">BeyondScene</span>, a novel framework that overcomes prior limitations, generating exquisite higher-resolution (over 8K) human-centric scenes with exceptional text-image correspondence and naturalness using existing pretrained diffusion models. <span class="dnerf">BeyondScene</span> employs a staged and hierarchical approach to initially generate a detailed base image focusing on crucial elements in instance creation for multiple humans and detailed descriptions beyond token limit of diffusion model, and then to seamlessly convert the base image to a higher-resolution output, exceeding training image size and incorporating details aware of text and instances via our novel instance-aware hierarchical enlargement process that consists of our proposed high-frequency injected forward diffusion and adaptive joint diffusion. <span class="dnerf">BeyondScene</span> surpasses existing methods in terms of correspondence with detailed text descriptions and naturalness, paving the way for advanced applications in higher-resolution human-centric scene creation beyond the capacity of pretrained diffusion models without costly retraining. 
+    </p>
+  </div>
+  <br>
+</div> -->
+    <!-- </div>
+  </div>
+</section> -->
+
+
+
+<section class="hero is-small">
+    <br>
+    <div  style="background-color: #ececec;">
+    <br>
+    <div class="container-small">
+      <h2 class="title is-3"><strong>Abstract</h2>
+      <p >
+        Generating higher-resolution human-centric scenes with details and controls remains a challenge for existing text-to-image diffusion models. This challenge stems from limited training image size, text encoder capacity (limited tokens), and the inherent difficulty of generating complex scenes involving multiple humans. While current methods attempted to address training size limit only, they often yielded human-centric scenes with severe artifacts. We propose <span class="dnerf">BeyondScene</span>, a novel framework that overcomes prior limitations, generating exquisite higher-resolution (over 8K) human-centric scenes with exceptional text-image correspondence and naturalness using existing pretrained diffusion models. <span class="dnerf">BeyondScene</span> employs a staged and hierarchical approach to initially generate a detailed base image focusing on crucial elements in instance creation for multiple humans and detailed descriptions beyond token limit of diffusion model, and then to seamlessly convert the base image to a higher-resolution output, exceeding training image size and incorporating details aware of text and instances via our novel instance-aware hierarchical enlargement process that consists of our proposed high-frequency injected forward diffusion and adaptive joint diffusion. <span class="dnerf">BeyondScene</span> surpasses existing methods in terms of correspondence with detailed text descriptions and naturalness, paving the way for advanced applications in higher-resolution human-centric scene creation beyond the capacity of pretrained diffusion models without costly retraining. 
+      </p>
+    </div>
+    <br>
+  </div>
+
+  
+</section>
+
+
+
+<br>
+<section class="hero is-small">
+  <!-- <div style="background-color:#FAF3F0;"> -->
+  <h2 class="title is-3"><strong>Results</h2>
+  <div class="hero-body">
+    <div class="content has-text-justified">
+      <!-- 7K images -->
+      <h3 class="title is-4"><strong>Higher-Resolution Synthsized Images, Resolution: <span style="color: #974EC3;">7168 x 4096</span></h3>
+      <!-- <p style="text-align: center"> Utilizing a pretrained model trained on a resolution of <span style="color: #974EC3;">1024 x 1024</span>, our method can generate images with a resolution of up to <span style="color: #974EC3;">7168 x 4096</span> <i style="color:#ac354b">without the need for training/optimization</i>. </p> -->
+
+      <!-- SKI example-->
+      <p style="text-align: center"> Prompt: <span style="font-family: 'Kalam';">“A background of the middle of snowy mountain, there are a man is riding ski with red ski suit, a woman is riding ski with yellow ski suit, a man is riding ski with orange ski suit, a woman is riding ski with blue ski suit, a man is riding ski with green ski suit and a man is riding ski with black ski suit.”</span> </p>
+
+      <div id="carousel" class="carousel">
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/ski/ski_ours.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with <span class="dnerf">BeyondScene</span></p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/ski/ski_multi.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with Multidiffusion</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/ski/ski_scale.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with ScaleCrafter</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/ski/ski_sdxl.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with SDXL</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/ski/ski_sdxl_control.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with SDXL with ControlNet</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/ski/ski_sync.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with SyncDiffusion</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/ski/ski_t2i.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with T2I Adapter</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- </div> -->
+
+
+  <!-- Alps -->
+  <div style="background-color: #ececec;">
+    <div class="hero-body">
+      <br>
+      <p style="text-align: center"> Prompt: <span style="font-family: 'Kalam';">“The background of alps in spring, there are a girl with blond hair, wearing traditional red alps dress with elaborate embroidery and dancing with joy, a girl with blond hair, wearing traditional blue alps dress with elaborate embroidery and dancing with joy, a girl with blond hair, wearing traditional yellow alps dress with elaborate embroidery and dancing with joy, a girl with blond hair, wearing traditional white alps dress with elaborate embroidery and dancing with joy and a girl with blond hair, wearing traditional pink alps dress with elaborate embroidery and dancing with joy.”</span> </p>
+
+      <div id="carousel" class="carousel">
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/alps/alps_ours.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with <span class="dnerf">BeyondScene</span></p>
+        </div>
+        <!-- <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/alps/alps_region.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with Regional Multidiffusion</p>
+        </div> -->
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/alps/alps_multi.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with Multidiffusion</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/alps/alps_scale.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with ScaleCrafter</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/alps/alps_sdxl.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with SDXL</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/alps/alps_sdxl_control.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with SDXL with ControlNet</p>
+        </div>
+        <!-- <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/alps/alps_sync.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with SyncDiffusion</p>
+        </div> -->
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/7k/alps/alps_t2i.png" >
+          <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with T2I Adapter</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <br>
+  <div class="hero-body">
+    <div class="content has-text-justified">
+      <!-- 4K images -->
+      <h3 class="title is-4"><strong>Higher-Resolution Synthsized Images, Resolution: <span style="color: #974EC3;">4096 x 4096</span></h3>
+      <!-- <p style="text-align: center"> Utilizing a pretrained model trained on a resolution of <span style="color: #974EC3;">1024 x 1024</span>, our method can generate images with a resolution of up to <span style="color: #974EC3;">4096 x 4096</span> <i style="color:#ac354b">without the need for training/optimization</i>. </p> -->
+
+      <!-- zelda example-->
+      <p style="text-align: center"> Prompt: <span style="font-family: 'Kalam';">“In the background garden of 3D game, there are girl in red dress, Zelda character, wearing red dress with traditional leather accessories and colorful patterns girl in blue dress, Zelda character, wearing blue dress with traditional leather accessories and colorful patterns girl in green dress, Zelda character, wearing green dress with traditional leather accessories and colorful patterns, girl in yellow dress, Zelda character, wearing yellow dress with traditional leather accessories and colorful patterns.”</span> </p>
+
+      <div id="carousel" class="carousel">
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/zelda/zelda_ours.png" >
+          <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with <span class="dnerf">BeyondScene</span></p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/zelda/zelda_region.png" >
+          <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with Regional Multidiffusion</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/zelda/zelda_multi.png" >
+          <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with Multidiffusion</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/zelda/zelda_scale.png" >
+          <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with ScaleCrafter</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/zelda/zelda_sdxl.png" >
+          <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with SDXL</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/zelda/zelda_sdxl_control.png" >
+          <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with SDXL with ControlNet</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/zelda/zelda_sync.png" >
+          <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with SyncDiffusion</p>
+        </div>
+        <div class="img-txt">
+          <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/zelda/zelda_t2i.png" >
+          <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with T2I Adapter</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Girls -->
+<!-- <div style="background-color: #ececec;"> -->
+  <!-- <div class="hero-body">
+    <br>
+    <p style="text-align: center"> Prompt: <span style="font-family: 'Kalam';">“The background of alps in spring, there are a girl with blond hair, wearing traditional red alps dress with elaborate embroidery and dancing with joy, a girl with blond hair, wearing traditional blue alps dress with elaborate embroidery and dancing with joy, a girl with blond hair, wearing traditional yellow alps dress with elaborate embroidery and dancing with joy, a girl with blond hair, wearing traditional white alps dress with elaborate embroidery and dancing with joy and a girl with blond hair, wearing traditional pink alps dress with elaborate embroidery and dancing with joy.”</span> </p>
+
+    <div id="carousel" class="carousel">
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/girl/girl_ours.png" >
+        <p>Resolution: <span style="color: #974EC3;">7168 x 4096</span>; An image generated with <span class="dnerf">BeyondScene</span></p>
+      </div> -->
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/girl/girl_region.png" >
+        <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with Regional Multidiffusion</p>
+      </div> -->
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/girl/girl_multi.png" >
+        <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with Multidiffusion</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/girl/girl_scale.png" >
+        <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with ScaleCrafter</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/girl/girl_sdxl.png" >
+        <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with SDXL</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/girl/girl_sdxl_control.png" >
+        <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with SDXL with ControlNet</p>
+      </div> -->
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/girl/girl_sync.png" >
+        <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with SyncDiffusion</p>
+      </div> -->
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/4k/girl/girl_t2i.png" >
+        <p>Resolution: <span style="color: #974EC3;">4096 x 4096</span>; An image generated with T2I Adapter</p>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+<!-- <section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{park2021nerfies,
+  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
+  title     = {Nerfies: Deformable Neural Radiance Fields},
+  journal   = {ICCV},
+  year      = {2021},
+}</code></pre>
+  </div>
+</section> -->
+
+
+
+<br>
+<div class="hero-body">
+  <div class="content has-text-justified">
+    <!-- 3.5K images -->
+    <h3 class="title is-4"><strong>Higher-Resolution Synthsized Images, Resolution: <span style="color: #974EC3;">3584 x 2048</span></h3>
+    <!-- <p style="text-align: center"> Utilizing a pretrained model trained on a resolution of <span style="color: #974EC3;">1024 x 1024</span>, our method can generate images with a resolution of up to <span style="color: #974EC3;">3584 x 2048</span> <i style="color:#ac354b">without the need for training/optimization</i>. </p> -->
+
+    <!-- surfing -->
+    <p style="text-align: center"> Prompt: <span style="font-family: 'Kalam';">“A background of the large wave in sunny beach, there are a woman enjoying surfing with yellow wet suit, a woman enjoy surfing with pink wet suit, a man enjoy surfing with blue wet suit, a man enjoy surfing with white wet suit and a woman enjoy surfing with black wet suit.”</span> </p>
+
+    <div id="carousel" class="carousel">
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/surfing/surfing_ours.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with <span class="dnerf">BeyondScene</span></p>
+      </div>
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/surfing/surfing_region.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with Regional Multidiffusion</p>
+      </div> -->
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/surfing/surfing_multi.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with Multidiffusion</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/surfing/surfing_scale.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with ScaleCrafter</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/surfing/surfing_sdxl.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SDXL</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/surfing/surfing_sdxl_control.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SDXL with ControlNet</p>
+      </div>
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/surfing/surfing_sync.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SyncDiffusion</p>
+      </div> -->
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/surfing/surfing_t2i.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with T2I Adapter</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <!-- starwars -->
+ <div style="background-color: #ececec;">
+  <div class="hero-body">
+    <br>
+    <p style="text-align: center"> Prompt: <span style="font-family: 'Kalam';">“In the alien planet with galaxy in the sky, there are a storm trooper, a storm trooper, a storm trooper, a Darth Vader, a storm trooper, a storm trooper, a storm trooper, a storm trooper”</span> </p>
+
+    <div id="carousel" class="carousel">
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/starwars/starwars_ours.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with <span class="dnerf">BeyondScene</span></p>
+      </div>
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/starwars/starwars_region.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with Regional Multidiffusion</p>
+      </div> -->
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/starwars/starwars_multi.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with Multidiffusion</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/starwars/starwars_scale.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with ScaleCrafter</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/starwars/starwars_sdxl.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SDXL</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/starwars/starwars_sdxl_control.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SDXL with ControlNet</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/starwars/starwars_sync.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SyncDiffusion</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/starwars/starwars_t2i.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with T2I Adapter</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ <!-- beach -->
+ <div style="background-color: #ffffff;">
+  <div class="hero-body">
+    <br>
+    <p style="text-align: center"> Prompt: <span style="font-family: 'Kalam';">“A background of the beach in sunny day, there are a man running and wearing blue swim pants, a man running and wearing purple swim pants, a woman running and wearing green swim suit, a woman running and wearing pink swim suit, a man running and wearing red swim pants, a woman running and wearing yellow swim suit and a woman running and wearing red swim suit.”</span> </p>
+
+    <div id="carousel" class="carousel">
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/beach/beach_ours.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with <span class="dnerf">BeyondScene</span></p>
+      </div>
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/beach/beach_region.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with Regional Multidiffusion</p>
+      </div> -->
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/beach/beach_multi.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with Multidiffusion</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/beach/beach_scale.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with ScaleCrafter</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/beach/beach_sdxl.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SDXL</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/beach/beach_sdxl_control.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SDXL with ControlNet</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/beach/beach_sync.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SyncDiffusion</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/beach/beach_t2i.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with T2I Adapter</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- campfire -->
+<div style="background-color: #ececec;">
+  <div class="hero-body">
+    <br>
+    <p style="text-align: center"> Prompt: <span style="font-family: 'Kalam';">“A background of the forest at night and campfire in the middle of the forest, there are a girl sitting down in front of the fire with yellow shirts and listening the story, a girl sitting down in front of the fire with pink shirts and listening the story, a boy sitting down in front of the fire with blue shirts and listening the story, a boy sitting down in front of the fire with white shirts and talking about scary story and a girl sitting down in front of the fire with black shirts and listening the story”</span> </p>
+
+    <div id="carousel" class="carousel">
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/campfire/campfire_ours.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with <span class="dnerf">BeyondScene</span></p>
+      </div>
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/campfire/campfire_region.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with Regional Multidiffusion</p>
+      </div> -->
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/campfire/campfire_multi.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with Multidiffusion</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/campfire/campfire_scale.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with ScaleCrafter</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/campfire/campfire_sdxl.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SDXL</p>
+      </div>
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/campfire/campfire_sdxl_control.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SDXL with ControlNet</p>
+      </div>
+      <!-- <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/campfire/campfire_sync.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with SyncDiffusion</p>
+      </div> -->
+      <div class="img-txt">
+        <img src="https://media.githubusercontent.com/media/janeyeon/beyond-scene-homepage/main/static/images/3.5k/campfire/campfire_t2i.png" >
+        <p>Resolution: <span style="color: #974EC3;">3584 x 2048</span>; An image generated with T2I Adapter</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="./static/videos/nerfies_paper.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/janeyeon" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This means you are free to borrow the <a
+              href="https://github.com/nerfies/nerfies.github.io">source code 1 </a> and  <a
+              href="https://yingqinghe.github.io/scalecrafter/">source code 2</a> of this website,
+            we just ask that you link back to this page in the footer.
+            Please remember to remove the analytics code included in the header of the website which
+            you do not want on your website.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
