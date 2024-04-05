@@ -151,7 +151,7 @@ body{
 }
 .xtitle{
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-family: 'century-gothic';
+    /* font-family: 'century-gothic'; */
     font-size: 30px;
     text-align: center;
     /* margin: 10px 0; */
@@ -252,8 +252,8 @@ a:hover:after{
 .marquee-inner p{
   /* font-weight: 600;
   font-size: 20px; */
-  font-family: cursive;
-  /* font-family: 'century-gothic'; */
+  /* font-family: cursive; */
+  font-family: 'century-gothic';
 }
 .marquee-inner.to-left{
   animation: marqueeLeft 25s linear infinite;
